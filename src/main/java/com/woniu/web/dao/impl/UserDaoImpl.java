@@ -89,7 +89,7 @@ public class UserDaoImpl implements IUserDao{
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}finally {
-			JdbcUtil.closeConn(null, ps, conn);
+			JdbcUtil.closeConn(rs, ps, conn);
 		}
 		return null;
 	}
@@ -116,7 +116,57 @@ public class UserDaoImpl implements IUserDao{
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}finally {
-			JdbcUtil.closeConn(null, ps, conn);
+			JdbcUtil.closeConn(rs, ps, conn);
+		}
+	}
+	@Override
+	public int getRowCount() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn = JdbcUtil.getConnection();
+			String sql = "select count(*) from user";
+			ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			int rowCount = 0;
+			if(rs.next()) {
+				rowCount = rs.getInt(1);
+			}
+			return rowCount;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}finally {
+			JdbcUtil.closeConn(rs, ps, conn);
+		}
+	}
+	@Override
+	public List<User> find(int startLine, int size) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn = JdbcUtil.getConnection();
+			String sql = "select * from user limit ?,?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, startLine);
+			ps.setInt(2, size);
+			rs = ps.executeQuery();
+			List<User> list = new ArrayList<>();
+			while(rs.next()) {
+				User user = new User();
+				user.setId(rs.getInt("id"));
+				user.setName(rs.getString("name"));
+				user.setBrithday(rs.getDate("brithday"));
+				user.setMoney(rs.getDouble("money"));
+				user.setPhoto(rs.getString("photo"));
+				list.add(user);
+			}
+			return list;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}finally {
+			JdbcUtil.closeConn(rs, ps, conn);
 		}
 	}
 	

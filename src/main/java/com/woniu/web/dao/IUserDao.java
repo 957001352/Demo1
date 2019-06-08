@@ -10,4 +10,9 @@ public interface IUserDao {
 	void update(User user);
 	User find(Integer id);
 	List<User> find();
+	
+	int getRowCount();
+	List<User> find(int startLine,int size);
+	
+	
 }

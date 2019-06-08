@@ -2,6 +2,7 @@ package com.woniu.web.service.impl;
 
 import java.util.List;
 
+import com.woniu.web.bean.Page;
 import com.woniu.web.bean.User;
 import com.woniu.web.dao.IUserDao;
 import com.woniu.web.dao.impl.UserDaoImpl;
@@ -23,6 +24,14 @@ public class UserServiceImpl implements IUserService {
 	}
 	public List<User> find() {
 		return ud.find();
+	}
+	@Override
+	public Page findPageData(int p, int size) {
+		int rowCount = ud.getRowCount();
+		Page page = new Page(p,rowCount,size);
+		List<User> list = ud.find(page.getStartLine(), page.getSize());
+		page.setList(list);
+		return page;
 	}
 
 }

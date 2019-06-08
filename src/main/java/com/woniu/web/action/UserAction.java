@@ -1,14 +1,10 @@
 package com.woniu.web.action;
 
-import java.util.List;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.ModelDriven;
+import com.woniu.web.bean.Page;
 import com.woniu.web.bean.User;
 import com.woniu.web.service.IUserService;
 import com.woniu.web.service.impl.UserServiceImpl;
@@ -16,12 +12,23 @@ import com.woniu.web.service.impl.UserServiceImpl;
 public class UserAction extends ActionSupport implements ModelDriven<User>{
 	private User user = new User();
 	private IUserService service = new UserServiceImpl();
+	private int p = 1;
+	
+	public int getP() {
+		return p;
+	}
+	public void setP(int p) {
+		this.p = p;
+	}
+	
 	public String save() {
 		service.save(user);
 		return "find";
 	}
 	public String find() {
-		ServletActionContext.getRequest().setAttribute("list", service.find());
+		
+		Page page = service.findPageData(p,7);
+		ServletActionContext.getRequest().setAttribute("page", page);
 		return "findUI";
 	}
 	public String delete() {
